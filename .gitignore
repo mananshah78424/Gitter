@@ -1,0 +1,7 @@
+function.zip
+.terraform
+AWSCLIV2.pkg
+bootstrap
+terraform.tfstate
+terraform.tfstate.backup
+terraform.tfvars
