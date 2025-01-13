@@ -1,4 +1,23 @@
 // Main terraform file 
+
+
+// Variables
+variable "github_token" {
+    description = "Github token"
+    type = string
+    sensitive = true
+}
+
+variable "github_owner" {
+    description = "Github owner"
+    type = string
+}
+
+variable "github_repo" {
+    description = "Github repo"
+    type = string
+}
+
 terraform {
     required_providers {
         aws = {
@@ -25,6 +44,14 @@ resource "aws_lambda_function" "gitter" {
     source_code_hash = filebase64sha256("gitter.zip")
 
     depends_on = [aws_iam_role.gitter_lambda_role] 
+
+    environment {
+        variables = {
+            GITHUB_TOKEN = var.github_token
+            GITHUB_OWNER = var.github_owner
+            GITHUB_REPO = var.github_repo
+        }
+    }
 
     tags = {
       Name ="Daily commiter for github"
@@ -73,4 +100,28 @@ resource "aws_iam_role_policy" "gitter_lambda_role_policy" {
         ]
     })
   
+}
+
+// Create the cron schedule
+resource "aws_cloudwatch_event_rule" "gitter_schedule" {
+    name = "gitter_schedule"
+    description = "Schedule to run the lambda function"
+    schedule_expression = "cron(0 18 * * ? *)" // Run the lambda function at 6 PM UTC
+}
+
+// aws_cloudwatch_event_target specifies the Lambda function to be triggered by the CloudWatch event rule.
+resource "aws_cloudwatch_event_target" "gitter_lambda_target" {
+    rule = aws_cloudwatch_event_rule.gitter_schedule.name
+    target_id = "gitter_lambda_target"
+    arn = aws_lambda_function.gitter.arn
+}
+
+// aws_lambda_permission grants the CloudWatch event rule permission to invoke the Lambda function.
+
+resource "aws_lambda_permission" "name" {
+    statement_id = "AllowExecutionFromCloudWatch"
+    action = "lambda:InvokeFunction"
+    function_name = aws_lambda_function.gitter.function_name
+    principal = "events.amazonaws.com"
+    source_arn = aws_cloudwatch_event_rule.gitter_schedule.arn
 }
