@@ -106,7 +106,7 @@ resource "aws_iam_role_policy" "gitter_lambda_role_policy" {
 resource "aws_cloudwatch_event_rule" "gitter_schedule" {
     name = "gitter_schedule"
     description = "Schedule to run the lambda function"
-    schedule_expression = "cron(0 18 * * ? *)" // Run the lambda function at 6 PM UTC
+    schedule_expression = "cron(20 18 * * ? *)" // Run the lambda function at 6:20 PM UTC
 }
 
 // aws_cloudwatch_event_target specifies the Lambda function to be triggered by the CloudWatch event rule.
