@@ -1,6 +1,6 @@
 ## What is Gitter?
 
-Gitter is a tool that helps maintain your daily contribution on Github. Using a cron job, it pushes ~~2~~ 1 daily ~~commits~~  commit on to your GitHub repo, thus helping you maintain your daily contributions.
+Gitter is a tool that helps maintain your daily contribution on Github. Using a cron job, it pushes 1 daily commit onto your GitHub repo, thus helping you maintain your daily contributions.
 
 ## Tools Used
 
